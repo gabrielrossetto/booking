@@ -11,20 +11,36 @@ const roomsSlice = createSlice({
   name: 'rooms',
   initialState,
   reducers: {
-    fetchRoomsStart(state) {
+    fetchRoomsStartReducer(state) {
       state.loading = true;
       state.error = null;
     },
-    fetchRoomsSuccess(state) {
+    fetchRoomsSuccessReducer(state, action) {
       state.loading = false;
+      state.rooms = action.payload;
     },
-    fetchRoomsFailure(state, action) {
+    fetchRoomsFailureReducer(state, action) {
       state.loading = false;
       state.error = action.payload;
+    },
+    fetchRoomsByDatesReducer(state, action) {
+      const { rooms, checkInDate, checkOutDate } = action.payload;
+      const filteredRooms = rooms.filter((room) => {
+        return !room.bookedDates.some(date => date >= checkInDate && date <= checkOutDate);
+      });
+      state.rooms = filteredRooms;
+    },
+    addBookingDatesReducer(state, action) {
+      const { selectedRoom, checkInDate, checkOutDate } = action.payload;
+      const room = state.rooms.find(room => room.id === selectedRoom.id);
+      if (room) {
+        room.bookedDates.push(checkInDate);
+        room.bookedDates.push(checkOutDate);
+      }
     },
   },
 });
 
-export const { fetchRoomsStart, fetchRoomsSuccess, fetchRoomsFailure } = roomsSlice.actions;
+export const { fetchRoomsStartReducer, fetchRoomsSuccessReducer, fetchRoomsFailureReducer, fetchRoomsByDatesReducer, addBookingDatesReducer } = roomsSlice.actions;
 
 export default roomsSlice.reducer;

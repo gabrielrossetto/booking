@@ -11,23 +11,27 @@ const bookingsSlice = createSlice({
   name: 'bookings',
   initialState,
   reducers: {
-    fetchBookingsStart(state) {
+    fetchBookingsStartReducer(state) {
       state.loading = true;
       state.error = null;
     },
-    fetchBookingsSuccess(state) {
+    fetchBookingsSuccessReducer(state, action) {
       state.loading = false;
+      state.bookings = action.payload;
     },
-    fetchBookingsFailure(state, action) {
+    fetchBookingsFailureReducer(state, action) {
       state.loading = false;
       state.error = action.payload;
     },
-    addBooking(state, action) {
+    addBookingReducer(state, action) {
       state.bookings.push(action.payload);
+    },
+    deleteBookingReducer(state, action) {
+      state.bookings = state.bookings.filter(booking => booking.id !== action.payload.bookingId);
     },
   },
 });
 
-export const { fetchBookingsStart, fetchBookingsSuccess, fetchBookingsFailure, addBooking } = bookingsSlice.actions;
+export const { fetchBookingsStartReducer, fetchBookingsSuccessReducer, fetchBookingsFailureReducer, addBookingReducer, deleteBookingReducer } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;

@@ -1,86 +1,75 @@
-import styled from 'styled-components';
-import { Container, Button, TextField, Card, CardContent, CardMedia, Typography } from '@mui/material';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react';
+import { Container, Card, CardContent, CardMedia, Typography, Box } from '@mui/material';
+import { Link } from 'react-router-dom';
 import useDataFetching from '../../hooks/useDataFetching';
-
-const HomeContainer = styled(Container)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-`;
-
-const SearchBar = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #fff;
-  border-radius: 32px;
-  padding: 10px 20px;
-  margin-bottom: 20px;
-`;
-
-const SearchButton = styled(Button)`
-  border-radius: 50%;
-`;
-
-const CardList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-`;
-
-const StyledCard = styled(Card)`
-  margin: 10px;
-  width: 250px;
-`;
-
-const CardContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const CardImage = styled(CardMedia)`
-  height: 200px;
-`;
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import moment from 'moment';
+import RoundSearchButton from '../../components/Buttons/RoundSearchButton';
+import { NumericFormat } from 'react-number-format';
+import { Room as RoomType } from '../../types/room';
 
 const HomePage = () => {
-  const { rooms } = useDataFetching();
+  const { rooms, fetchRooms, filterRooms } = useDataFetching();
+  const [checkInDate, setCheckInDate] = useState<Date | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
+
+  const handleSearch = () => {
+    filterRooms(moment(checkInDate).format('YYYY-MM-DD'), moment(checkOutDate).format('YYYY-MM-DD'));
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, [])
 
   return (
-    <HomeContainer>
-      <SearchBar>
-        <TextField label="Local" variant="outlined" />
-        <TextField label="Check-in" type="date" variant="outlined" />
-        <TextField label="Check-out" type="date" variant="outlined" />
-        <SearchButton variant="contained" color="primary">
-          Search
-        </SearchButton>
-      </SearchBar>
+    <Container className="flex flex-col items-center justify-center mt-4">
+      <Box className="flex flex-col items-center justify-center gap-8 mb-4 md:flex-row md:items-center md:justify-center">
+        <DatePicker
+          label="Check-in"
+          value={checkInDate}
+          onChange={(date) => setCheckInDate(date)}
+          disablePast
+        />
+        <DatePicker
+          label="Check-out"
+          value={checkOutDate}
+          onChange={(date) => setCheckOutDate(date)}
+          disablePast
+          minDate={checkInDate}
+          className="text-pink-400"
+        />
+        <RoundSearchButton onClick={handleSearch} />
+      </Box>
 
       {rooms && rooms.length > 0 && (
-        <CardList>
-          {/* TODO: Typescript */}
-          {rooms?.map((room) => (
-            <StyledCard key={room.id}>
-              <CardContentWrapper>
-                <CardImage
-                  component="img"
-                  image="https://via.placeholder.com/250x200"
-                  alt="Placeholder"
-                />
-                <CardContent>
-                  <Typography variant="h6">Title</Typography>
-                  <Typography variant="body2">Description</Typography>
-                  <Typography variant="body2">Additional text text</Typography>
-                </CardContent>
-              </CardContentWrapper>
-            </StyledCard>
-          ))}
-        </CardList>
+        <Box className="flex flex-wrap justify-center">
+          {rooms?.map((room: RoomType) => {
+            const { location, imageUrl, name, pricePerNight } = room;
+            return (
+              <Link to={`/room/${room.id}`} key={room.id}>
+                <Card className="w-64 m-4" key={room.id}>
+                  <Box className="flex flex-col items-center">
+                    <CardMedia
+                      className="h-64"
+                      component="img"
+                      image={imageUrl}
+                      alt="Placeholder"
+                    />
+                    <CardContent className="flex flex-col items-start">
+                      <Typography variant="h6">{name}</Typography>
+                      <Typography variant="body2">{location}</Typography>
+                      <NumericFormat className="font-bold" prefix="$" value={pricePerNight} />
+                    </CardContent>
+                  </Box>
+                </Card>
+              </Link>
+            )
+          })}
+        </Box>
       )}
 
-    </HomeContainer>
+    </Container>
   );
 };
 

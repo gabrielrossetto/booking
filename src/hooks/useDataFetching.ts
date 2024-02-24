@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBookingsStart, addBooking } from '../store/slices/bookingsSlice';
-import { fetchRoomsStart } from '../store/slices/roomsSlice';
+import { fetchBookingsStartReducer, addBookingReducer, deleteBookingReducer } from '../store/slices/bookingsSlice';
+import { fetchRoomsStartReducer, fetchRoomsByDatesReducer, addBookingDatesReducer } from '../store/slices/roomsSlice';
+import { v4 as uuidv4 } from 'uuid';
 
 const useDataFetching = () => {
   const dispatch = useDispatch();
@@ -10,14 +10,37 @@ const useDataFetching = () => {
   //TODO: typescript
   const { rooms, loading: roomsLoading, error: roomsError } = useSelector((state) => state.rooms);
 
-  useEffect(() => {
-    dispatch(fetchBookingsStart());
-    dispatch(fetchRoomsStart());
-  }, [dispatch]);
+  //TODO: typescript 
+  const bookingsWithRoomDetails = bookings.map(booking => {
+    const room = rooms.find(room => room.id === booking.roomId);
+    return {
+      ...booking,
+      roomDetails: room
+    };
+  });
 
+  const fetchBookings = () => {
+    dispatch(fetchBookingsStartReducer());
+  }
+
+  const fetchRooms = () => {
+    dispatch(fetchRoomsStartReducer());
+  }
+
+  const filterRooms = (checkInDate: string, checkOutDate: string) => {
+    dispatch(fetchRoomsByDatesReducer({ rooms, checkInDate, checkOutDate }));
+  }
   //TODO: typescript
-  const handleAddBooking = (newBooking) => {
-    dispatch(addBooking(newBooking));
+  const handleAddBooking = (checkInDate: string, checkOutDate: string, selectedRoom) => {
+    dispatch(addBookingDatesReducer({ checkInDate, checkOutDate, selectedRoom }));
+
+    const bookingId = uuidv4();
+    const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom.id, id: bookingId, };
+    dispatch(addBookingReducer({ ...formattedBooking }));
+  };
+
+  const handleDeleteBooking = (bookingId: string) => {
+    dispatch(deleteBookingReducer({ bookingId }));
   };
 
   return {
@@ -28,6 +51,11 @@ const useDataFetching = () => {
     bookingsError,
     roomsError,
     handleAddBooking,
+    fetchRooms,
+    fetchBookings,
+    filterRooms,
+    bookingsWithRoomDetails,
+    handleDeleteBooking,
   };
 };
 

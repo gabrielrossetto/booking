@@ -1,36 +1,28 @@
-import styled from 'styled-components';
-import { AppBar, Toolbar, IconButton } from '@mui/material';
-import { AccountCircle } from '@mui/icons-material';
+import { AppBar, Toolbar, Box, Container, Button, Avatar } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-
-const StyledAppBar = styled(AppBar)`
-  background-color: #FFFFFF;
-  box-shadow: none;
-  box-shadow: rgb(0 0 0/8%) 0 1px 0;
-`;
-
-const HeaderContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
 
 const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <StyledAppBar position="static" color="transparent" elevation={0}>
-      <Toolbar>
-        <HeaderContent>
-          <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => navigate("/")}>
-            Logo
-          </IconButton>
-          <IconButton edge="end" color="inherit" aria-label="profile">
-            <AccountCircle />
-          </IconButton>
-        </HeaderContent>
-      </Toolbar>
-    </StyledAppBar>
+    <Box className="text-white bg-primary">
+      <AppBar position="static" color='transparent'>
+        <Container >
+          <Toolbar className="flex items-center justify-between w-full">
+            <Box className="flex items-center justify-center">
+              <Avatar onClick={() => navigate("/")} className="cursor-pointer" alt="Hostfully" src="https://play-lh.googleusercontent.com/laohj2nRBHB1oXnSJflEQIM_L8gHrNQjrQd31TpNpj0ZpAuHMLPPwNP-68W5sjfdteUr" />
+              <Button
+                onClick={() => navigate("/mybookings")}
+                sx={{ color: 'white', ml: 5 }}
+              >
+                My Bookings
+              </Button>
+            </Box>
+            <Avatar alt="Gabriel Rossetto" />
+          </Toolbar>
+        </Container>
+      </AppBar>
+    </Box>
   );
 };
 
