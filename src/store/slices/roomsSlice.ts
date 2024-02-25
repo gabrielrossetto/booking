@@ -1,7 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { mockRooms } from '../../services/mockData';
+import { Room as RoomType } from '../../types/room';
 
-const initialState = {
+interface RoomsState {
+  rooms: RoomType[];
+  loading: boolean;
+}
+
+const initialState: RoomsState = {
   rooms: mockRooms,
   loading: false,
 };
@@ -18,7 +24,7 @@ const roomsSlice = createSlice({
     },
     fetchRoomsByDatesReducer(state, action) {
       const { rooms, checkInDate, checkOutDate } = action.payload;
-      const filteredRooms = rooms.filter((room) => {
+      const filteredRooms = rooms.filter((room: RoomType) => {
         return !room.bookedDates.some(({ startDate, endDate }) => {
           return startDate <= checkOutDate && endDate >= checkInDate;
         });
@@ -27,7 +33,7 @@ const roomsSlice = createSlice({
     },
     addBookingDatesReducer(state, action) {
       const { selectedRoom, checkInDate, checkOutDate } = action.payload;
-      const room = state.rooms.find(room => room.id === selectedRoom.id);
+      const room = state.rooms.find((room: RoomType) => room.id === selectedRoom.id);
       if (room) {
         room.bookedDates.push({ startDate: checkInDate, endDate: checkOutDate });
       }
@@ -35,7 +41,7 @@ const roomsSlice = createSlice({
     editBookingDatesReducer(state, action) {
       const { checkInDate, checkOutDate, selectedRoom, currentCheckInDate, currentCheckOutDate } = action.payload;
 
-      const roomIndex = state.rooms.findIndex(room => room.id === selectedRoom.id);
+      const roomIndex = state.rooms.findIndex((room: RoomType) => room.id === selectedRoom.id);
 
       if (roomIndex !== -1) {
         const room = state.rooms[roomIndex];

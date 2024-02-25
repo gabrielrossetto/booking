@@ -1,8 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 import { Container, Typography, Card, CardContent, Box, CircularProgress } from '@mui/material';
 import useDataFetching from '../../hooks/useDataFetching';
-import { Booking as BookingType } from '../../types/booking';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
 const MyBookings = () => {
@@ -29,7 +29,7 @@ const MyBookings = () => {
           <Typography className="mt-4 font-bold text-black" variant="h4">My Bookings</Typography>
           <Box className="w-full">
             {bookingsLoading && <Box className="flex items-center justify-center"><CircularProgress /></Box>}
-            {!bookingsLoading && bookingsWithRoomDetails.map((booking: BookingType, index: number) => (
+            {!bookingsLoading && bookingsWithRoomDetails.map((booking, index) => (
               <Card className="w-full mb-4 rounded-lg" key={`booking-${index}`}>
                 <CardContent className="flex justify-between">
                   <Box className="flex items-center w-8/12">

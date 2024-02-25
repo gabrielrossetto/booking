@@ -3,19 +3,20 @@ import { fetchBookingsStartReducer, fetchBookingsSuccessReducer, addBookingReduc
 import { fetchRoomsStartReducer, fetchRoomsSuccessReducer, fetchRoomsByDatesReducer, addBookingDatesReducer, editBookingDatesReducer } from '../store/slices/roomsSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { EditBookingPayload as EditBookingPayloadType } from '../types/editbooking';
-import { AddBookingPayload as AddBookingPayloadType } from '../types/addbooking';
+import { AddBookingPayload as AddBookingPayloadType } from '../types/addbookingpayload';
 import { FilterRooms as FilterRoomsType } from '../types/filterrooms';
+import { RootState as RootStateType } from '../store/store';
+import { Room as RoomType } from '../types/room';
+import { Booking as BookingType } from '../types/booking';
 
 const useDataFetching = () => {
   const dispatch = useDispatch();
-  //TODO: typescript
-  const { bookings, loading: bookingsLoading } = useSelector((state) => state.bookings);
-  //TODO: typescript
-  const { rooms, loading: roomsLoading } = useSelector((state) => state.rooms);
 
-  //TODO: typescript 
-  const bookingsWithRoomDetails = bookings.map(booking => {
-    const room = rooms.find(room => room.id === booking.roomId);
+  const { bookings, loading: bookingsLoading } = useSelector((state: RootStateType) => state.bookings);
+  const { rooms, loading: roomsLoading } = useSelector((state: RootStateType) => state.rooms);
+
+  const bookingsWithRoomDetails = bookings.map((booking: BookingType) => {
+    const room = rooms.find((room: RoomType) => room.id === booking.roomId);
     return {
       ...booking,
       roomDetails: room

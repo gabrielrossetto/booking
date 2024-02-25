@@ -10,6 +10,7 @@ import Perks from '../../components/Perks/Perks';
 import Divider from '../../components/Divider/Divider';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { Room as RoomType } from '../../types/room';
+import { ValidateBooking as ValidateBookingType } from '../../types/validatebooking';
 
 const Room = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Room = () => {
   const { rooms, handleAddBooking, handleEditBooking } = useDataFetching();
   const { validateBooking } = useBookingValidation();
 
-  const selectedRoom: RoomType = rooms.find((room: RoomType) => room.id === id);
+  const selectedRoom: RoomType = rooms.find((room) => room.id === id);
   const { description, imageUrl, name, location, perks } = selectedRoom;
 
   const [searchParams] = useSearchParams();
@@ -37,7 +38,7 @@ const Room = () => {
   }, [currentCheckInDate, currentCheckOutDate]);
 
   const handleBookButtonAction = () => {
-    const error = validateBooking({ checkInDate, checkOutDate, roomId: id, isEditMode })
+    const error = validateBooking({ checkInDate, checkOutDate, roomId: id, isEditMode } as ValidateBookingType)
 
     if (error) {
       toast.error(error);

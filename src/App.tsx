@@ -11,7 +11,6 @@ import Header from './components/Header/Header';
 import NotFound from './containers/NotFound/NotFound';
 import { ToastContainer } from 'react-toastify';
 
-
 const App = () => {
   return (
     <Provider store={store}>
@@ -25,7 +24,6 @@ const App = () => {
               <Route path="/room/:id" element={<Room />} />
               <Route path="/mybookings" element={<MyBookings />} />
               <Route path="*" element={<NotFound />} />
-              {/* TODO: When no route */}
             </Routes>
           </Router>
         </>
