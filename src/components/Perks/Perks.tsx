@@ -5,11 +5,10 @@ import WifiIcon from '@mui/icons-material/Wifi';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
+import { Perks as PerksType } from '../../types/perks';
 
-// TODO: Typescript
-const Perks = ({ perks } = {}) => {
-  // TODO: Typescript
-  const handleIcon = (perkName) => {
+const Perks = ({ perks }: PerksType) => {
+  const handleIcon = (perkName: string) => {
     switch (perkName) {
       case 'pets':
         return <PetsIcon className="text-primary" />;
@@ -24,8 +23,7 @@ const Perks = ({ perks } = {}) => {
     }
   }
 
-  // TODO: Typescript
-  const handleText = (perkName) => {
+  const handleText = (perkName: string) => {
     switch (perkName) {
       case 'pets':
         return <Typography className="pl-4 font-bold text-default">Pets Allowed</Typography>;
@@ -42,7 +40,6 @@ const Perks = ({ perks } = {}) => {
 
   return (
     <div className="flex flex-col items-center justify-between w-full gap-8 mt-5">
-      {/* TODO: Typescript */}
       {perks?.map((perk, index) => {
         return (
           <Box className="flex items-center w-full" key={index}>

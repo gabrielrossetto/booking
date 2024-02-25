@@ -29,9 +29,18 @@ const bookingsSlice = createSlice({
     deleteBookingReducer(state, action) {
       state.bookings = state.bookings.filter(booking => booking.id !== action.payload.bookingId);
     },
+    editBookingReducer(state, action) {
+      const { checkInDate, checkOutDate, selectedRoom } = action.payload;
+
+      const index = state.bookings.findIndex(booking => booking.roomId === selectedRoom.id);
+
+      if (index !== -1) {
+        state.bookings[index] = { ...state.bookings[index], checkInDate, checkOutDate };
+      }
+    }
   },
 });
 
-export const { fetchBookingsStartReducer, fetchBookingsSuccessReducer, fetchBookingsFailureReducer, addBookingReducer, deleteBookingReducer } = bookingsSlice.actions;
+export const { fetchBookingsStartReducer, fetchBookingsSuccessReducer, fetchBookingsFailureReducer, addBookingReducer, deleteBookingReducer, editBookingReducer } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;

@@ -1,27 +1,47 @@
 import { useState } from 'react'
 import { Container, Typography, Box } from '@mui/material';
 import moment from 'moment';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import useDataFetching from '../../hooks/useDataFetching';
 import Perks from '../../components/Perks/Perks';
 import Divider from '../../components/Divider/Divider';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { Room as RoomType } from '../../types/room';
-import { useNavigate } from "react-router-dom";
 
 const Room = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const { rooms, handleAddBooking } = useDataFetching();
+  const { id } = useParams();
+  const { rooms, handleAddBooking, handleEditBooking } = useDataFetching();
   const selectedRoom: RoomType = rooms.find((room: RoomType) => room.id === id);
   const { description, imageUrl, name, location, perks } = selectedRoom;
+
+  const [searchParams] = useSearchParams();
+
+  const currentCheckInDate = searchParams.get("checkInDate");
+  const currentCheckOutDate = searchParams.get("checkOutDate");
+  const isEditMode = searchParams.get("edit");
 
   const [checkInDate, setCheckInDate] = useState<Date | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
 
   const handleAdd = () => {
-    handleAddBooking(moment(checkInDate).format('YYYY-MM-DD'), moment(checkOutDate).format('YYYY-MM-DD'), selectedRoom);
+    handleAddBooking({
+      checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
+      checkOutDate: moment(checkOutDate).format('YYYY-MM-DD'),
+      selectedRoom
+    });
+    navigate("/");
+  }
+
+  const handleEdit = () => {
+    handleEditBooking({
+      checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
+      checkOutDate: moment(checkOutDate).format('YYYY-MM-DD'),
+      selectedRoom,
+      currentCheckInDate: moment(currentCheckInDate).format('YYYY-MM-DD'),
+      currentCheckOutDate: moment(currentCheckOutDate).format('YYYY-MM-DD'),
+    });
     navigate("/");
   }
 
@@ -58,7 +78,7 @@ const Room = () => {
             minDate={checkInDate}
             className="mb-4"
           />
-          <PrimaryButton className="w-full md:w-4/5" text="Book" onClick={handleAdd} />
+          <PrimaryButton className="w-full md:w-4/5" text={`${isEditMode ? 'Update Booking' : 'Book'}`} onClick={isEditMode ? handleEdit : handleAdd} />
         </Box>
       </Box>
     </Container>

@@ -38,9 +38,33 @@ const roomsSlice = createSlice({
         room.bookedDates.push(checkOutDate);
       }
     },
+    editBookingDatesReducer(state, action) {
+      const { checkInDate, checkOutDate, selectedRoom, currentCheckInDate, currentCheckOutDate } = action.payload;
+
+      const roomIndex = state.rooms.findIndex(room => room.id === selectedRoom.id);
+
+      if (roomIndex !== -1) {
+        const room = state.rooms[roomIndex];
+
+        const currentCheckInDateIndex = room.bookedDates.indexOf(currentCheckInDate);
+        if (currentCheckInDateIndex !== -1) {
+          room.bookedDates.splice(currentCheckInDateIndex, 1);
+        }
+
+        const currentCheckOutDateIndex = room.bookedDates.indexOf(currentCheckOutDate);
+        if (currentCheckOutDateIndex !== -1) {
+          room.bookedDates.splice(currentCheckOutDateIndex, 1);
+        }
+
+        room.bookedDates.push(checkInDate);
+        room.bookedDates.push(checkOutDate);
+
+        state.rooms[roomIndex] = room;
+      }
+    }
   },
 });
 
-export const { fetchRoomsStartReducer, fetchRoomsSuccessReducer, fetchRoomsFailureReducer, fetchRoomsByDatesReducer, addBookingDatesReducer } = roomsSlice.actions;
+export const { fetchRoomsStartReducer, fetchRoomsSuccessReducer, fetchRoomsFailureReducer, fetchRoomsByDatesReducer, addBookingDatesReducer, editBookingDatesReducer } = roomsSlice.actions;
 
 export default roomsSlice.reducer;

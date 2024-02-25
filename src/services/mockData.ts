@@ -1,17 +1,4 @@
-export const mockBookings = [
-  { 
-    id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-    roomId: '1', 
-    checkInDate: '2024-02-22', 
-    checkOutDate: '2024-02-25' 
-  },
-  { 
-    id: "7b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6e",
-    roomId: '2', 
-    checkInDate: '2024-03-01', 
-    checkOutDate: '2024-03-05' 
-  },
-];
+export const mockBookings = [];
 
 export const mockRooms = [
   {

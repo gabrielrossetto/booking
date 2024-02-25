@@ -15,7 +15,10 @@ const HomePage = () => {
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
 
   const handleSearch = () => {
-    filterRooms(moment(checkInDate).format('YYYY-MM-DD'), moment(checkOutDate).format('YYYY-MM-DD'));
+    filterRooms({
+      checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
+      checkOutDate: moment(checkOutDate).format('YYYY-MM-DD')
+    });
   };
 
   useEffect(() => {
@@ -47,7 +50,7 @@ const HomePage = () => {
           {rooms?.map((room: RoomType) => {
             const { location, imageUrl, name, pricePerNight } = room;
             return (
-              <Link to={`/room/${room.id}`} key={room.id}>
+              <Link to={checkInDate && checkOutDate ? `/room/${room.id}?checkInDate=${moment(checkInDate).format('YYYY-MM-DD')}&checkOutDate=${moment(checkOutDate).format('YYYY-MM-DD')}` : `/room/${room.id}`} key={room.id}>
                 <Card className="w-64 m-4" key={room.id}>
                   <Box className="flex flex-col items-center">
                     <CardMedia

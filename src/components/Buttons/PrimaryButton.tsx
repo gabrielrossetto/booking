@@ -1,5 +1,6 @@
-// TODO: Typescript
-const PrimaryButton = ({ text, onClick, className }) => {
+import { PrimaryButton as PrimaryButtonType } from "../../types/primarybutton";
+
+const PrimaryButton = ({ text, onClick, className }: PrimaryButtonType) => {
   return (
     <button
       onClick={onClick}

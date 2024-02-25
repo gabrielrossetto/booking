@@ -1,7 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBookingsStartReducer, addBookingReducer, deleteBookingReducer } from '../store/slices/bookingsSlice';
-import { fetchRoomsStartReducer, fetchRoomsByDatesReducer, addBookingDatesReducer } from '../store/slices/roomsSlice';
+import { fetchBookingsStartReducer, addBookingReducer, deleteBookingReducer, editBookingReducer } from '../store/slices/bookingsSlice';
+import { fetchRoomsStartReducer, fetchRoomsByDatesReducer, addBookingDatesReducer, editBookingDatesReducer } from '../store/slices/roomsSlice';
 import { v4 as uuidv4 } from 'uuid';
+import { EditBookingPayload as EditBookingPayloadType } from '../types/editbooking';
+import { AddBookingPayload as AddBookingPayloadType } from '../types/addbooking';
+import { FilterRooms as FilterRoomsType } from '../types/filterrooms';
 
 const useDataFetching = () => {
   const dispatch = useDispatch();
@@ -27,16 +30,21 @@ const useDataFetching = () => {
     dispatch(fetchRoomsStartReducer());
   }
 
-  const filterRooms = (checkInDate: string, checkOutDate: string) => {
+  const filterRooms = ({ checkInDate, checkOutDate }: FilterRoomsType) => {
     dispatch(fetchRoomsByDatesReducer({ rooms, checkInDate, checkOutDate }));
   }
-  //TODO: typescript
-  const handleAddBooking = (checkInDate: string, checkOutDate: string, selectedRoom) => {
+
+  const handleAddBooking = ({ checkInDate, checkOutDate, selectedRoom }: AddBookingPayloadType) => {
     dispatch(addBookingDatesReducer({ checkInDate, checkOutDate, selectedRoom }));
 
     const bookingId = uuidv4();
     const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom.id, id: bookingId, };
     dispatch(addBookingReducer({ ...formattedBooking }));
+  };
+
+  const handleEditBooking = ({ checkInDate, checkOutDate, selectedRoom, currentCheckInDate, currentCheckOutDate }: EditBookingPayloadType) => {
+    dispatch(editBookingDatesReducer({ checkInDate, checkOutDate, selectedRoom, currentCheckInDate, currentCheckOutDate }));
+    dispatch(editBookingReducer({ checkInDate, checkOutDate, selectedRoom }));
   };
 
   const handleDeleteBooking = (bookingId: string) => {
@@ -56,6 +64,7 @@ const useDataFetching = () => {
     filterRooms,
     bookingsWithRoomDetails,
     handleDeleteBooking,
+    handleEditBooking
   };
 };
 

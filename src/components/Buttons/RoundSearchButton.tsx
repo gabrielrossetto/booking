@@ -1,7 +1,7 @@
 import SearchIcon from '@mui/icons-material/Search';
+import { RoundSearchButton as RoundSearchButtonType } from '../../types/roundsearchbutton';
 
-// TODO: Typescript
-const RoundSearchButton = ({ onClick }) => {
+const RoundSearchButton = ({ onClick }: RoundSearchButtonType) => {
   return (
     <button
       className="p-2 rounded-full bg-primary hover:bg-primary-dark"
