@@ -1,26 +1,35 @@
-import { Container, Typography, Card, CardContent, Box } from '@mui/material';
+import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { Container, Typography, Card, CardContent, Box, CircularProgress } from '@mui/material';
 import useDataFetching from '../../hooks/useDataFetching';
 import { Booking as BookingType } from '../../types/booking';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import { useNavigate } from "react-router-dom";
 
 const MyBookings = () => {
-  const { bookingsWithRoomDetails, handleDeleteBooking } = useDataFetching();
+  const { bookingsWithRoomDetails, handleDeleteBooking, bookingsLoading, fetchBookings } = useDataFetching();
+
   const navigate = useNavigate();
 
   const handleUpdate = (roomId: string, checkInDate: string, checkOutDate: string) => {
     navigate(`/room/${roomId}?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&edit=true`);
   };
 
+  useEffect(() => {
+    fetchBookings();
+  }, [])
+
   return (
     <Container className="flex flex-col items-center mt-4">
       {bookingsWithRoomDetails.length === 0 ? (
-        <Typography className="mt-4 font-bold text-black" variant="h4">No bookings</Typography>
+        <Box className="flex items-center justify-center mt-8">
+          <Typography className="mt-4 font-bold text-black" variant="h4">No bookings</Typography>
+        </Box>
       ) : (
         <>
           <Typography className="mt-4 font-bold text-black" variant="h4">My Bookings</Typography>
           <Box className="w-full">
-            {bookingsWithRoomDetails.map((booking: BookingType, index: number) => (
+            {bookingsLoading && <Box className="flex items-center justify-center"><CircularProgress /></Box>}
+            {!bookingsLoading && bookingsWithRoomDetails.map((booking: BookingType, index: number) => (
               <Card className="w-full mb-4 rounded-lg" key={`booking-${index}`}>
                 <CardContent className="flex justify-between">
                   <Box className="flex items-center w-8/12">

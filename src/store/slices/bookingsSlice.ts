@@ -4,7 +4,6 @@ import { mockBookings } from '../../services/mockData';
 const initialState = {
   bookings: mockBookings,
   loading: false,
-  error: null,
 };
 
 const bookingsSlice = createSlice({
@@ -13,15 +12,9 @@ const bookingsSlice = createSlice({
   reducers: {
     fetchBookingsStartReducer(state) {
       state.loading = true;
-      state.error = null;
     },
-    fetchBookingsSuccessReducer(state, action) {
+    fetchBookingsSuccessReducer(state) {
       state.loading = false;
-      state.bookings = action.payload;
-    },
-    fetchBookingsFailureReducer(state, action) {
-      state.loading = false;
-      state.error = action.payload;
     },
     addBookingReducer(state, action) {
       state.bookings.push(action.payload);
@@ -41,6 +34,6 @@ const bookingsSlice = createSlice({
   },
 });
 
-export const { fetchBookingsStartReducer, fetchBookingsSuccessReducer, fetchBookingsFailureReducer, addBookingReducer, deleteBookingReducer, editBookingReducer } = bookingsSlice.actions;
+export const { fetchBookingsStartReducer, fetchBookingsSuccessReducer, addBookingReducer, deleteBookingReducer, editBookingReducer } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;

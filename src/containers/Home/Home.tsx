@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { Container, Card, CardContent, CardMedia, Typography, Box } from '@mui/material';
+import { Container, Card, CardContent, CardMedia, Typography, Box, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import useDataFetching from '../../hooks/useDataFetching';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -10,7 +10,7 @@ import { NumericFormat } from 'react-number-format';
 import { Room as RoomType } from '../../types/room';
 
 const HomePage = () => {
-  const { rooms, fetchRooms, filterRooms } = useDataFetching();
+  const { rooms, fetchRooms, filterRooms, roomsLoading } = useDataFetching();
   const [checkInDate, setCheckInDate] = useState<Date | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
 
@@ -44,10 +44,10 @@ const HomePage = () => {
         />
         <RoundSearchButton onClick={handleSearch} />
       </Box>
-
       {rooms && rooms.length > 0 && (
         <Box className="flex flex-wrap justify-center">
-          {rooms?.map((room: RoomType) => {
+          {roomsLoading && <CircularProgress />}
+          {!roomsLoading && rooms?.map((room: RoomType) => {
             const { location, imageUrl, name, pricePerNight } = room;
             return (
               <Link to={checkInDate && checkOutDate ? `/room/${room.id}?checkInDate=${moment(checkInDate).format('YYYY-MM-DD')}&checkOutDate=${moment(checkOutDate).format('YYYY-MM-DD')}` : `/room/${room.id}`} key={room.id}>

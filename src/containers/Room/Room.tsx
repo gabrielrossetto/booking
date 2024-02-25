@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Container, Typography, Box } from '@mui/material';
 import moment from 'moment';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { toast } from 'react-toastify';
 import useDataFetching from '../../hooks/useDataFetching';
+import useBookingValidation from '../../hooks/useBookingValidation';
 import Perks from '../../components/Perks/Perks';
 import Divider from '../../components/Divider/Divider';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
@@ -13,6 +15,8 @@ const Room = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { rooms, handleAddBooking, handleEditBooking } = useDataFetching();
+  const { validateBooking } = useBookingValidation();
+
   const selectedRoom: RoomType = rooms.find((room: RoomType) => room.id === id);
   const { description, imageUrl, name, location, perks } = selectedRoom;
 
@@ -25,24 +29,36 @@ const Room = () => {
   const [checkInDate, setCheckInDate] = useState<Date | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
 
-  const handleAdd = () => {
-    handleAddBooking({
-      checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
-      checkOutDate: moment(checkOutDate).format('YYYY-MM-DD'),
-      selectedRoom
-    });
-    navigate("/");
-  }
+  useEffect(() => {
+    if (currentCheckInDate && currentCheckOutDate) {
+      setCheckInDate(moment(currentCheckInDate));
+      setCheckOutDate(moment(currentCheckOutDate));
+    }
+  }, [currentCheckInDate, currentCheckOutDate]);
 
-  const handleEdit = () => {
-    handleEditBooking({
-      checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
-      checkOutDate: moment(checkOutDate).format('YYYY-MM-DD'),
-      selectedRoom,
-      currentCheckInDate: moment(currentCheckInDate).format('YYYY-MM-DD'),
-      currentCheckOutDate: moment(currentCheckOutDate).format('YYYY-MM-DD'),
-    });
-    navigate("/");
+  const handleBookButtonAction = () => {
+    const error = validateBooking({ checkInDate, checkOutDate, roomId: id, isEditMode })
+
+    if (error) {
+      toast.error(error);
+    } else {
+      if (isEditMode) {
+        handleEditBooking({
+          checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
+          checkOutDate: moment(checkOutDate).format('YYYY-MM-DD'),
+          selectedRoom,
+          currentCheckInDate: moment(currentCheckInDate).format('YYYY-MM-DD'),
+          currentCheckOutDate: moment(currentCheckOutDate).format('YYYY-MM-DD'),
+        });
+      } else {
+        handleAddBooking({
+          checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
+          checkOutDate: moment(checkOutDate).format('YYYY-MM-DD'),
+          selectedRoom
+        });
+      }
+      navigate("/");
+    }
   }
 
   return (
@@ -78,7 +94,7 @@ const Room = () => {
             minDate={checkInDate}
             className="mb-4"
           />
-          <PrimaryButton className="w-full md:w-4/5" text={`${isEditMode ? 'Update Booking' : 'Book'}`} onClick={isEditMode ? handleEdit : handleAdd} />
+          <PrimaryButton className="w-full md:w-4/5" text={`${isEditMode ? 'Update Booking' : 'Book'}`} onClick={handleBookButtonAction} />
         </Box>
       </Box>
     </Container>

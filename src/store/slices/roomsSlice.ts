@@ -4,7 +4,6 @@ import { mockRooms } from '../../services/mockData';
 const initialState = {
   rooms: mockRooms,
   loading: false,
-  error: null,
 };
 
 const roomsSlice = createSlice({
@@ -13,20 +12,16 @@ const roomsSlice = createSlice({
   reducers: {
     fetchRoomsStartReducer(state) {
       state.loading = true;
-      state.error = null;
     },
-    fetchRoomsSuccessReducer(state, action) {
+    fetchRoomsSuccessReducer(state) {
       state.loading = false;
-      state.rooms = action.payload;
-    },
-    fetchRoomsFailureReducer(state, action) {
-      state.loading = false;
-      state.error = action.payload;
     },
     fetchRoomsByDatesReducer(state, action) {
       const { rooms, checkInDate, checkOutDate } = action.payload;
       const filteredRooms = rooms.filter((room) => {
-        return !room.bookedDates.some(date => date >= checkInDate && date <= checkOutDate);
+        return !room.bookedDates.some(({ startDate, endDate }) => {
+          return startDate <= checkOutDate && endDate >= checkInDate;
+        });
       });
       state.rooms = filteredRooms;
     },
@@ -34,8 +29,7 @@ const roomsSlice = createSlice({
       const { selectedRoom, checkInDate, checkOutDate } = action.payload;
       const room = state.rooms.find(room => room.id === selectedRoom.id);
       if (room) {
-        room.bookedDates.push(checkInDate);
-        room.bookedDates.push(checkOutDate);
+        room.bookedDates.push({ startDate: checkInDate, endDate: checkOutDate });
       }
     },
     editBookingDatesReducer(state, action) {
@@ -46,18 +40,14 @@ const roomsSlice = createSlice({
       if (roomIndex !== -1) {
         const room = state.rooms[roomIndex];
 
-        const currentCheckInDateIndex = room.bookedDates.indexOf(currentCheckInDate);
-        if (currentCheckInDateIndex !== -1) {
-          room.bookedDates.splice(currentCheckInDateIndex, 1);
-        }
+        const currentBookingIndex = room.bookedDates.findIndex(({ startDate, endDate }) => {
+          return startDate === currentCheckInDate && endDate === currentCheckOutDate;
+        });
 
-        const currentCheckOutDateIndex = room.bookedDates.indexOf(currentCheckOutDate);
-        if (currentCheckOutDateIndex !== -1) {
-          room.bookedDates.splice(currentCheckOutDateIndex, 1);
+        if (currentBookingIndex !== -1) {
+          room.bookedDates.splice(currentBookingIndex, 1);
+          room.bookedDates.push({ startDate: checkInDate, endDate: checkOutDate });
         }
-
-        room.bookedDates.push(checkInDate);
-        room.bookedDates.push(checkOutDate);
 
         state.rooms[roomIndex] = room;
       }
@@ -65,6 +55,6 @@ const roomsSlice = createSlice({
   },
 });
 
-export const { fetchRoomsStartReducer, fetchRoomsSuccessReducer, fetchRoomsFailureReducer, fetchRoomsByDatesReducer, addBookingDatesReducer, editBookingDatesReducer } = roomsSlice.actions;
+export const { fetchRoomsStartReducer, fetchRoomsSuccessReducer, fetchRoomsByDatesReducer, addBookingDatesReducer, editBookingDatesReducer } = roomsSlice.actions;
 
 export default roomsSlice.reducer;
