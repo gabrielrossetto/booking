@@ -32,7 +32,7 @@ const useBookingValidation = () => {
     const checkInString = checkInMoment.format('YYYY-MM-DD');
     const checkOutString = checkOutMoment.format('YYYY-MM-DD');
 
-    if (!isEditMode && room.bookedDates.some(({ startDate, endDate }: { startDate: string, endDate: string }) => {
+    if (!isEditMode && room?.bookedDates && room?.bookedDates?.some(({ startDate, endDate }: { startDate: string, endDate: string }) => {
       return (startDate <= checkInString && endDate >= checkInString) || (startDate <= checkOutString && endDate >= checkOutString);
     })) {
       return "Date already booked, pick another one.";

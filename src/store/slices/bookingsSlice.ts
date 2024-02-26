@@ -1,15 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { mockBookings } from '../../services/mockData';
 import { Booking as BookingType } from '../../types/booking';
 import { toast } from 'react-toastify';
 interface BookingsState {
   bookings: BookingType[];
   loading: boolean;
+  error: boolean;
 }
 
 const initialState: BookingsState = {
-  bookings: mockBookings,
+  bookings: [],
   loading: false,
+  error: false
 };
 
 const bookingsSlice = createSlice({
@@ -19,8 +20,14 @@ const bookingsSlice = createSlice({
     fetchBookingsStartReducer(state) {
       state.loading = true;
     },
-    fetchBookingsSuccessReducer(state) {
+    fetchBookingsSuccessReducer(state, action) {
       state.loading = false;
+      state.bookings = action.payload;
+      state.error = false;
+    },
+    fetchBookingsErrorReducer(state) {
+      state.loading = false;
+      state.error = true;
     },
     addBookingReducer(state, action) {
       state.bookings.push(action.payload);
@@ -30,19 +37,13 @@ const bookingsSlice = createSlice({
       state.bookings = state.bookings.filter((booking: BookingType) => booking.id !== action.payload.bookingId);
       toast.success("Room successfully deleted.");
     },
-    editBookingReducer(state, action) {
-      const { checkInDate, checkOutDate, selectedRoom } = action.payload;
-
-      const index = state.bookings.findIndex((booking: BookingType) => booking.roomId === selectedRoom.id);
-
-      if (index !== -1) {
-        state.bookings[index] = { ...state.bookings[index], checkInDate, checkOutDate };
-        toast.success("Room successfully updated.");
-      }
+    editBookingReducer(state) {
+      state.loading = false;
+      toast.success("Room successfully updated.");
     }
   },
 });
 
-export const { fetchBookingsStartReducer, fetchBookingsSuccessReducer, addBookingReducer, deleteBookingReducer, editBookingReducer } = bookingsSlice.actions;
+export const { fetchBookingsStartReducer, fetchBookingsSuccessReducer, fetchBookingsErrorReducer, addBookingReducer, deleteBookingReducer, editBookingReducer } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;

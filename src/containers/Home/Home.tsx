@@ -13,17 +13,27 @@ const HomePage = () => {
   const { rooms, fetchRooms, filterRooms, roomsLoading } = useDataFetching();
   const [checkInDate, setCheckInDate] = useState<Date | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
+  const [filteredRooms, setFilteredRooms] = useState<RoomType[]>([]);
 
   const handleSearch = () => {
-    filterRooms({
-      checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
-      checkOutDate: moment(checkOutDate).format('YYYY-MM-DD')
-    });
+    if (checkInDate && checkOutDate) {
+      const availableRooms = filterRooms({
+        checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
+        checkOutDate: moment(checkOutDate).format('YYYY-MM-DD')
+      });
+      setFilteredRooms(availableRooms);
+    } else {
+      setFilteredRooms(rooms);
+    }
   };
 
   useEffect(() => {
-    fetchRooms();
-  }, [])
+    if (!rooms.length) {
+      fetchRooms();
+    } else {
+      setFilteredRooms(rooms);
+    }
+  }, []);
 
   return (
     <Container className="flex flex-col items-center justify-center mt-4">
@@ -40,14 +50,13 @@ const HomePage = () => {
           onChange={(date) => setCheckOutDate(date)}
           disablePast
           minDate={checkInDate}
-          className="text-pink-400"
         />
         <RoundSearchButton onClick={handleSearch} />
       </Box>
-      {rooms && rooms.length > 0 && (
+      {filteredRooms && filteredRooms.length > 0 && (
         <Box className="flex flex-wrap justify-center">
           {roomsLoading && <CircularProgress />}
-          {!roomsLoading && rooms?.map((room: RoomType) => {
+          {!roomsLoading && filteredRooms?.map((room: RoomType) => {
             const { location, imageUrl, name, pricePerNight } = room;
             return (
               <Link to={checkInDate && checkOutDate ? `/room/${room.id}?checkInDate=${moment(checkInDate).format('YYYY-MM-DD')}&checkOutDate=${moment(checkOutDate).format('YYYY-MM-DD')}` : `/room/${room.id}`} key={room.id}>

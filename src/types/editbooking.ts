@@ -4,6 +4,5 @@ export interface EditBookingPayload {
   checkInDate: string;
   checkOutDate: string;
   selectedRoom: RoomType;
-  currentCheckInDate: string;
-  currentCheckOutDate: string;
+  bookingId: string;
 }

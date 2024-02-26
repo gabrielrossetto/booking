@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
 import { Container, Typography, Box } from '@mui/material';
 import moment from 'moment';
@@ -15,20 +16,19 @@ import { ValidateBooking as ValidateBookingType } from '../../types/validatebook
 const Room = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { rooms, handleAddBooking, handleEditBooking } = useDataFetching();
+  const { rooms, handleAddBooking, handleEditBooking, fetchRooms, getBookingByRoomId } = useDataFetching();
   const { validateBooking } = useBookingValidation();
-
-  const selectedRoom: RoomType = rooms.find((room) => room.id === id);
-  const { description, imageUrl, name, location, perks } = selectedRoom;
-
   const [searchParams] = useSearchParams();
-
   const currentCheckInDate = searchParams.get("checkInDate");
   const currentCheckOutDate = searchParams.get("checkOutDate");
   const isEditMode = searchParams.get("edit");
-
   const [checkInDate, setCheckInDate] = useState<Date | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
+  const selectedRoom: RoomType | undefined = rooms.find((room) => room.id === id);
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   useEffect(() => {
     if (currentCheckInDate && currentCheckOutDate) {
@@ -37,20 +37,27 @@ const Room = () => {
     }
   }, [currentCheckInDate, currentCheckOutDate]);
 
+  if (!selectedRoom) {
+    return;
+  }
+  const { description, imageUrl, name, location, perks } = selectedRoom;
+
   const handleBookButtonAction = () => {
     const error = validateBooking({ checkInDate, checkOutDate, roomId: id, isEditMode } as ValidateBookingType)
 
     if (error) {
       toast.error(error);
     } else {
-      if (isEditMode) {
-        handleEditBooking({
-          checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
-          checkOutDate: moment(checkOutDate).format('YYYY-MM-DD'),
-          selectedRoom,
-          currentCheckInDate: moment(currentCheckInDate).format('YYYY-MM-DD'),
-          currentCheckOutDate: moment(currentCheckOutDate).format('YYYY-MM-DD'),
-        });
+      if (isEditMode && id) {
+        const selectedBooking = getBookingByRoomId(id);
+        if (selectedBooking) {
+          handleEditBooking({
+            checkInDate: moment(checkInDate).format('YYYY-MM-DD'),
+            checkOutDate: moment(checkOutDate).format('YYYY-MM-DD'),
+            selectedRoom,
+            bookingId: selectedBooking.id
+          });
+        }
       } else {
         handleAddBooking({
           checkInDate: moment(checkInDate).format('YYYY-MM-DD'),

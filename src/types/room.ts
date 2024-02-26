@@ -6,6 +6,4 @@ export interface Room {
   perks: string[];
   name: string;
   pricePerNight: number;
-  bookedDates: { startDate: string; endDate: string }[];
-
 }

@@ -1,13 +1,24 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBookingsStartReducer, fetchBookingsSuccessReducer, addBookingReducer, deleteBookingReducer, editBookingReducer } from '../store/slices/bookingsSlice';
-import { fetchRoomsStartReducer, fetchRoomsSuccessReducer, fetchRoomsByDatesReducer, addBookingDatesReducer, editBookingDatesReducer } from '../store/slices/roomsSlice';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  fetchBookingsStartReducer,
+  fetchBookingsSuccessReducer,
+  addBookingReducer,
+  deleteBookingReducer,
+  editBookingReducer,
+  fetchBookingsErrorReducer,
+} from '../store/slices/bookingsSlice';
+import {
+  fetchRoomsStartReducer,
+  fetchRoomsSuccessReducer,
+  fetchRoomsErrorReducer,
+} from '../store/slices/roomsSlice';
 import { EditBookingPayload as EditBookingPayloadType } from '../types/editbooking';
 import { AddBookingPayload as AddBookingPayloadType } from '../types/addbookingpayload';
 import { FilterRooms as FilterRoomsType } from '../types/filterrooms';
 import { RootState as RootStateType } from '../store/store';
 import { Room as RoomType } from '../types/room';
 import { Booking as BookingType } from '../types/booking';
+import moment from 'moment';
 
 const useDataFetching = () => {
   const dispatch = useDispatch();
@@ -26,36 +37,100 @@ const useDataFetching = () => {
   const fetchBookings = () => {
     dispatch(fetchBookingsStartReducer());
 
-    // Faking the API call
-    dispatch(fetchBookingsSuccessReducer());
+    fetch("http://localhost:3000/bookings")
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(fetchBookingsSuccessReducer(data));
+      })
+      .catch(() => {
+        dispatch(fetchBookingsErrorReducer());
+      });
   }
 
-  const fetchRooms = () => {
+  const fetchRooms = async () => {
     dispatch(fetchRoomsStartReducer());
 
-    // Faking the API call
-    dispatch(fetchRoomsSuccessReducer());
+    return await fetch("http://localhost:3000/rooms")
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(fetchRoomsSuccessReducer(data));
+      })
+      .catch(() => {
+        dispatch(fetchRoomsErrorReducer());
+      });
   }
 
   const filterRooms = ({ checkInDate, checkOutDate }: FilterRoomsType) => {
-    dispatch(fetchRoomsByDatesReducer({ rooms, checkInDate, checkOutDate }));
+    const reservedRoomIds = bookings
+      .filter(booking => {
+        return (
+          moment(checkInDate).isBefore(booking.checkOutDate) &&
+          moment(checkOutDate).isAfter(booking.checkInDate)
+        );
+      })
+      .map(booking => booking.roomId);
+
+    const availableRooms = rooms.filter(room => !reservedRoomIds.includes(room.id));
+
+    return availableRooms;
   }
 
   const handleAddBooking = ({ checkInDate, checkOutDate, selectedRoom }: AddBookingPayloadType) => {
-    dispatch(addBookingDatesReducer({ checkInDate, checkOutDate, selectedRoom }));
+    const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom.id };
 
-    const bookingId = uuidv4();
-    const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom.id, id: bookingId, };
-    dispatch(addBookingReducer({ ...formattedBooking }));
+    fetch("http://localhost:3000/bookings", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formattedBooking),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(addBookingReducer(data));
+      })
+      .catch(() => {
+        dispatch(fetchBookingsErrorReducer());
+      });
   };
 
-  const handleEditBooking = ({ checkInDate, checkOutDate, selectedRoom, currentCheckInDate, currentCheckOutDate }: EditBookingPayloadType) => {
-    dispatch(editBookingDatesReducer({ checkInDate, checkOutDate, selectedRoom, currentCheckInDate, currentCheckOutDate }));
-    dispatch(editBookingReducer({ checkInDate, checkOutDate, selectedRoom }));
+  const handleEditBooking = ({ checkInDate, checkOutDate, selectedRoom, bookingId }: EditBookingPayloadType) => {
+    const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom.id };
+
+    fetch(`http://localhost:3000/bookings/${bookingId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formattedBooking),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        dispatch(editBookingReducer());
+      })
+      .catch(() => {
+        dispatch(fetchBookingsErrorReducer());
+      });
   };
 
   const handleDeleteBooking = (bookingId: string) => {
-    dispatch(deleteBookingReducer({ bookingId }));
+    fetch(`http://localhost:3000/bookings/${bookingId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then(() => {
+        dispatch(deleteBookingReducer({ bookingId }));
+      })
+      .catch(() => {
+        dispatch(fetchBookingsErrorReducer());
+      });
+  };
+
+  const getBookingByRoomId = (roomId: string) => {
+    return bookings.find(booking => booking.roomId === roomId);
   };
 
   return {
@@ -69,7 +144,8 @@ const useDataFetching = () => {
     filterRooms,
     bookingsWithRoomDetails,
     handleDeleteBooking,
-    handleEditBooking
+    handleEditBooking,
+    getBookingByRoomId
   };
 };
 
