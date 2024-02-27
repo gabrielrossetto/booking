@@ -4,6 +4,7 @@ import { RoundSearchButton as RoundSearchButtonType } from '../../types/roundsea
 const RoundSearchButton = ({ onClick }: RoundSearchButtonType) => {
   return (
     <button
+      data-testid="round-search-button"
       className="p-2 rounded-full bg-primary hover:bg-primary-dark"
       onClick={onClick}
     >
