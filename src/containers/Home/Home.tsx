@@ -1,4 +1,3 @@
-import React from 'react';
 import { useEffect, useState } from 'react';
 import { Container, Box, CircularProgress } from '@mui/material';
 import useDataFetching from '../../hooks/useDataFetching';

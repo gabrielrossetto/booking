@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardContent, Box, Typography } from '@mui/material';
 import { MyBookings as MyBookingsType } from '../../types/mybookings';
 import PrimaryButton from '../Buttons/PrimaryButton';

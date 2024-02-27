@@ -1,4 +1,3 @@
-import React from 'react';
 import { render } from '@testing-library/react';
 import Perks from './Perks';
 
@@ -15,7 +14,7 @@ describe('<Perks />', () => {
     });
   });
 
-  const getPerkText = (perkName) => {
+  const getPerkText = (perkName: string) => {
     switch (perkName) {
       case 'pets':
         return 'Pets Allowed';

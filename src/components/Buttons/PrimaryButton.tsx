@@ -1,4 +1,3 @@
-import React from 'react';
 import { PrimaryButton as PrimaryButtonType } from "../../types/primarybutton";
 
 const PrimaryButton = ({ text, onClick, className }: PrimaryButtonType) => {

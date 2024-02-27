@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState, useEffect } from 'react'
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import moment from 'moment';

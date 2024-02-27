@@ -1,4 +1,3 @@
-import React from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { RoundSearchButton as RoundSearchButtonType } from '../../types/roundsearchbutton';
 
