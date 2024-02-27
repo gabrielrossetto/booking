@@ -1,10 +1,9 @@
+import React from 'react';
 import { Card, CardContent, Box, Typography } from '@mui/material';
 import { MyBookings as MyBookingsType } from '../../types/mybookings';
 import PrimaryButton from '../Buttons/PrimaryButton';
 
 const MyBookingsCard = ({ booking, handleDeleteBooking, handleUpdate }: { booking: MyBookingsType, handleDeleteBooking: (id: string) => void, handleUpdate: (roomId: string, checkInDate: string, checkOutDate: string) => void }) => {
-  console.log({ booking })
-
   return (
     <Card className="w-full mb-4 rounded-lg">
       <CardContent className="flex justify-between">

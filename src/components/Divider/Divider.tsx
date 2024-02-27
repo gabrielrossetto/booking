@@ -1,3 +1,4 @@
+import React from 'react';
 import { Divider as MUIDivider } from '@mui/material';
 
 const Divider = () => {

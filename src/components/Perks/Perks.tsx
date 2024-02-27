@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Typography, Box } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
 import WifiIcon from '@mui/icons-material/Wifi';
