@@ -6,20 +6,17 @@ import { RootState as RootStateType } from '../store/store';
 
 const useBookingValidation = () => {
   const { rooms } = useSelector((state: RootStateType) => state.rooms);
+  const { bookings } = useSelector((state: RootStateType) => state.bookings);
 
   const validateBooking = ({ checkInDate, checkOutDate, roomId, isEditMode }: ValidateBookingType) => {
     const room = rooms.find((room: RoomType) => room?.id === roomId);
 
-    if (!checkInDate || !checkOutDate) {
+    if (!checkInDate || !checkOutDate || !moment(checkInDate).isValid() || !moment(checkOutDate).isValid()) {
       return "Please, select the dates.";
     }
 
     if (!room) {
       return "Room not found.";
-    }
-
-    if (!room.bookedDates) {
-      return null;
     }
 
     const checkInMoment = moment(checkInDate);
@@ -29,12 +26,27 @@ const useBookingValidation = () => {
       return "Checkout date cannot be before or the same as the check-in date.";
     }
 
-    const checkInString = checkInMoment.format('YYYY-MM-DD');
-    const checkOutString = checkOutMoment.format('YYYY-MM-DD');
+    if (isEditMode) {
+      const hasBooking = bookings.some((booking) => booking.roomId === roomId);
+      if (!hasBooking) {
+        return "Cannot edit: no booking exists for this room.";
+      }
+    }
 
-    if (!isEditMode && room?.bookedDates && room?.bookedDates?.some(({ startDate, endDate }: { startDate: string, endDate: string }) => {
-      return (startDate <= checkInString && endDate >= checkInString) || (startDate <= checkOutString && endDate >= checkOutString);
-    })) {
+    const overlappingBooking = bookings.find((booking) => {
+      const bookingCheckIn = moment(booking.checkInDate);
+      const bookingCheckOut = moment(booking.checkOutDate);
+
+      return (
+        roomId === booking.roomId &&
+        ((checkInMoment.isBetween(bookingCheckIn, bookingCheckOut, undefined, '[]') ||
+          checkOutMoment.isBetween(bookingCheckIn, bookingCheckOut, undefined, '[]')) ||
+          (bookingCheckIn.isBetween(checkInMoment, checkOutMoment, undefined, '[]') ||
+            bookingCheckOut.isBetween(checkInMoment, checkOutMoment, undefined, '[]')))
+      );
+    });
+
+    if (!isEditMode && overlappingBooking) {
       return "Date already booked, pick another one.";
     }
 

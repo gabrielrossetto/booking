@@ -23,8 +23,8 @@ import moment from 'moment';
 const useDataFetching = () => {
   const dispatch = useDispatch();
 
-  const { bookings, loading: bookingsLoading } = useSelector((state: RootStateType) => state.bookings);
-  const { rooms, loading: roomsLoading } = useSelector((state: RootStateType) => state.rooms);
+  const { bookings, loading: bookingsLoading, error: bookingsError } = useSelector((state: RootStateType) => state.bookings);
+  const { rooms, loading: roomsLoading, error: roomsError } = useSelector((state: RootStateType) => state.rooms);
 
   const bookingsWithRoomDetails = bookings.map((booking: BookingType) => {
     const room = rooms.find((room: RoomType) => room.id === booking.roomId);
@@ -61,22 +61,26 @@ const useDataFetching = () => {
   }
 
   const filterRooms = ({ checkInDate, checkOutDate }: FilterRoomsType) => {
-    const reservedRoomIds = bookings
-      .filter(booking => {
-        return (
-          moment(checkInDate).isBefore(booking.checkOutDate) &&
-          moment(checkOutDate).isAfter(booking.checkInDate)
-        );
-      })
-      .map(booking => booking.roomId);
+    const overlappingBookings = bookings.filter(booking => {
+      const bookingStartDate = moment(booking.checkInDate);
+      const bookingEndDate = moment(booking.checkOutDate);
 
-    const availableRooms = rooms.filter(room => !reservedRoomIds.includes(room.id));
+      return (
+        (moment(checkInDate).isBefore(bookingEndDate) || moment(checkInDate).isSame(bookingEndDate, 'day')) &&
+        moment(checkOutDate).isAfter(bookingStartDate) &&
+        !moment(checkOutDate).isSame(bookingStartDate, 'day')
+      );
+    });
+
+    const unavailableRoomIds = overlappingBookings.map(booking => booking.roomId);
+    const availableRooms = rooms.filter(room => !unavailableRoomIds.includes(room.id));
 
     return availableRooms;
-  }
+  };
+
 
   const handleAddBooking = ({ checkInDate, checkOutDate, selectedRoom }: AddBookingPayloadType) => {
-    const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom.id };
+    const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom?.id };
 
     fetch("http://localhost:3000/bookings", {
       method: 'POST',
@@ -95,7 +99,7 @@ const useDataFetching = () => {
   };
 
   const handleEditBooking = ({ checkInDate, checkOutDate, selectedRoom, bookingId }: EditBookingPayloadType) => {
-    const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom.id };
+    const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom?.id };
 
     fetch(`http://localhost:3000/bookings/${bookingId}`, {
       method: 'PUT',
@@ -145,7 +149,9 @@ const useDataFetching = () => {
     bookingsWithRoomDetails,
     handleDeleteBooking,
     handleEditBooking,
-    getBookingByRoomId
+    getBookingByRoomId,
+    bookingsError,
+    roomsError
   };
 };
 
