@@ -8,7 +8,7 @@ This application aims to create a CRUD (Create, Read, Update, Delete) system for
 - **Delete:** Removing bookings from the system.
 - **Filter Bookings:** Filtering available rooms by bookings dates.
 
-![](https://github.com/gabrielrossetto/news-portal/blob/master/src/assets/news-portal.gif)
+![Live Demo](https://github.com/gabrielrossetto/booking/assets/42679806/a16fb63b-fada-4cbf-ba77-43ce2536afd9)
 
 
 ## Installation and Running
