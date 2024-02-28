@@ -30,16 +30,22 @@ const bookingsSlice = createSlice({
       state.error = true;
     },
     addBookingReducer(state, action) {
+      state.loading = false;
       state.bookings.push(action.payload);
       toast.success("Room successfully booked.");
     },
     deleteBookingReducer(state, action) {
+      state.loading = false;
       state.bookings = state.bookings.filter((booking: BookingType) => booking.id !== action.payload.bookingId);
       toast.success("Room successfully deleted.");
     },
-    editBookingReducer(state) {
+    editBookingReducer(state, action) {
       state.loading = false;
-      toast.success("Room successfully updated.");
+      const index = state.bookings.findIndex((booking: BookingType) => booking.id === action.payload.id);
+      if (index !== -1) {
+        state.bookings[index] = action.payload;
+        toast.success("Room successfully updated.");
+      }
     }
   },
 });

@@ -109,8 +109,8 @@ const useDataFetching = () => {
       body: JSON.stringify(formattedBooking),
     })
       .then((response) => response.json())
-      .then(() => {
-        dispatch(editBookingReducer());
+      .then((data) => {
+        dispatch(editBookingReducer(data));
       })
       .catch(() => {
         dispatch(fetchBookingsErrorReducer());
