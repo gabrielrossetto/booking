@@ -24,7 +24,7 @@
 ---------------------------------------------------------------------
 
 
-[LIVE DEMO](https://unique-kheer-36f9cd.netlify.app/)
+[LIVE DEMO](https://main--unique-kheer-36f9cd.netlify.app/)
 
 
 This application aims to create a CRUD (Create, Read, Update, Delete) system for managing bookings. The CRUD functionality includes:
