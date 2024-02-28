@@ -37,8 +37,15 @@ This application aims to create a CRUD (Create, Read, Update, Delete) system for
    ```bash
    npm run server
 
-5.
+5. URLs
 
    ```bash
    UI URL: http://127.0.0.1:5173/
    Server URL: http://localhost:3000/<> 
+
+
+## Documentation
+
+- [General Documentation](https://simple-poison-957.notion.site/Booking-Documentation-b06f576ea6a842b5866d82f17e1e396a)
+- [Components Documentation](https://github.com/gabrielrossetto/booking/blob/main/src/docs/components/components.md)
+- [Hooks Documentation](https://github.com/gabrielrossetto/booking/blob/main/src/docs/hooks/hooks.md)
