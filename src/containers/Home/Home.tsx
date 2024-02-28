@@ -57,7 +57,7 @@ const HomePage = () => {
         />
         <RoundSearchButton onClick={handleSearch} />
       </Box>
-      {roomsLoading && <CircularProgress />}
+      {roomsLoading && <Box className="flex items-center justify-center"><CircularProgress /></Box>}
       {filteredRooms && filteredRooms.length > 0 && (
         <Box className="flex flex-wrap justify-center">
           {filteredRooms.map((room: RoomType) => (
