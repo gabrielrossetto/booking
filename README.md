@@ -39,6 +39,6 @@ This application aims to create a CRUD (Create, Read, Update, Delete) system for
 
 5.
 
-  ```bash
-  UI URL: http://127.0.0.1:5173/
-  Server URL: http://localhost:3000/<> 
+   ```bash
+   UI URL: http://127.0.0.1:5173/
+   Server URL: http://localhost:3000/<> 
