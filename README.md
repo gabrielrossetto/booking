@@ -1,30 +1,40 @@
-# React + TypeScript + Vite
+# Booking App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This application aims to create a CRUD (Create, Read, Update, Delete) system for managing bookings. The CRUD functionality includes:
 
-Currently, two official plugins are available:
+- **Create:** Adding a new booking to the system.
+- **Read:** Viewing existing bookings.
+- **Update:** Modifying details of existing bookings.
+- **Delete:** Removing bookings from the system.
+- **Filter Bookings:** Filtering available rooms by bookings dates.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Live Demo](https://github.com/gabrielrossetto/booking/assets/42679806/a16fb63b-fada-4cbf-ba77-43ce2536afd9)
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Installation and Running
 
-- Configure the top-level `parserOptions` property like this:
+1. **Clone the Repository**:
+   
+   ```bash
+   git clone <repository_link>
+   cd directory_name
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+2. **Install Dependencies:**:
+   
+   ```bash
+   npm install
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+3. **Run the Project - UI:**:
+   
+   ```bash
+   npm run dev
+
+4. **Run the Project - Server:**:
+   
+   ```bash
+   npm run server
+
+5.
+
+  UI URL: http://127.0.0.1:5173/
+  Server URL: http://localhost:3000/<> 
