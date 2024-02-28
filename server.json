@@ -107,5 +107,12 @@
       "pricePerNight": 590
     }
   ],
-  "bookings": []
+  "bookings": [
+    {
+      "checkInDate": "2024-02-28",
+      "checkOutDate": "2024-02-29",
+      "roomId": "1",
+      "id": 1
+    }
+  ]
 }

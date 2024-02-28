@@ -17,8 +17,8 @@ const MyBookingsCard = ({ booking, handleDeleteBooking, handleUpdate }: { bookin
         </Box>
 
         <Box className="flex flex-col items-center justify-center w-1/3 gap-4">
-          <PrimaryButton className="w-3/5 md:w-4/6 bg-warning border-red-950 hover:bg-warning-dark" text="Delete" onClick={() => handleDeleteBooking(booking.id)} />
-          <PrimaryButton className="w-3/5 md:w-4/6" text="Update" onClick={() => handleUpdate(booking.roomId, booking.checkInDate, booking.checkOutDate)} />
+          <PrimaryButton className="w-full md:w-3/5 bg-warning border-red-950 hover:bg-warning-dark" text="Delete" onClick={() => handleDeleteBooking(booking.id)} />
+          <PrimaryButton className="w-full md:w-3/5" text="Update" onClick={() => handleUpdate(booking.roomId, booking.checkInDate, booking.checkOutDate)} />
         </Box>
       </CardContent>
     </Card>
