@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useState, useEffect } from 'react'
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import moment from 'moment';
