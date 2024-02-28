@@ -21,6 +21,8 @@ import { Booking as BookingType } from '../types/booking';
 import moment from 'moment';
 
 const useDataFetching = () => {
+  const apiUrl = import.meta.env.MODE === 'development' ? import.meta.env.VITE_API_URL_LOCAL : import.meta.env.VITE_API_URL;
+
   const dispatch = useDispatch();
 
   const { bookings, loading: bookingsLoading, error: bookingsError } = useSelector((state: RootStateType) => state.bookings);
@@ -37,7 +39,7 @@ const useDataFetching = () => {
   const fetchBookings = () => {
     dispatch(fetchBookingsStartReducer());
 
-    fetch("http://localhost:3000/bookings")
+    fetch(`${apiUrl}/bookings`)
       .then((response) => response.json())
       .then((data) => {
         dispatch(fetchBookingsSuccessReducer(data));
@@ -50,7 +52,7 @@ const useDataFetching = () => {
   const fetchRooms = async () => {
     dispatch(fetchRoomsStartReducer());
 
-    return await fetch("http://localhost:3000/rooms")
+    return await fetch(`${apiUrl}/rooms`)
       .then((response) => response.json())
       .then((data) => {
         dispatch(fetchRoomsSuccessReducer(data));
@@ -82,7 +84,7 @@ const useDataFetching = () => {
   const handleAddBooking = ({ checkInDate, checkOutDate, selectedRoom }: AddBookingPayloadType) => {
     const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom?.id };
 
-    fetch("http://localhost:3000/bookings", {
+    fetch(`${apiUrl}/bookings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -101,7 +103,7 @@ const useDataFetching = () => {
   const handleEditBooking = ({ checkInDate, checkOutDate, selectedRoom, bookingId }: EditBookingPayloadType) => {
     const formattedBooking = { checkInDate, checkOutDate, roomId: selectedRoom?.id };
 
-    fetch(`http://localhost:3000/bookings/${bookingId}`, {
+    fetch(`${apiUrl}/bookings/${bookingId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -118,7 +120,7 @@ const useDataFetching = () => {
   };
 
   const handleDeleteBooking = (bookingId: string) => {
-    fetch(`http://localhost:3000/bookings/${bookingId}`, {
+    fetch(`${apiUrl}/bookings/${bookingId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
